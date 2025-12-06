@@ -91,7 +91,7 @@ let latestText = "";
 recognition.onresult = e => {
   const last = e.results[e.results.length - 1];
   latestText = last[0].transcript.trim();
-  if (!atestText) return;
+  if (!latestText) return;
   resultBox.textContent = latestText;
   console.log("認識:", latestText);
  };

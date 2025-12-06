@@ -34,12 +34,17 @@ document.getElementById("loginBtn").onclick = () => {
 // ==============================
 //  OAuthトークン取得
 // ==============================
+accessToken = localStorage.getItem("twitch_token");
 if (location.hash.includes("access_token")) {
   const params = new URLSearchParams(location.hash.substring(1));
   accessToken = params.get("access_token");
 
   // token保存
   localStorage.setItem("twitch_token", accessToken);
+  getUserInfo();
+}
+
+if (accessToken && !broadcasterId) {
   getUserInfo();
 }
 // ==============================

@@ -27,7 +27,7 @@ document.getElementById("loginBtn").onclick = () => {
     `?client_id=${clientId}` +
     `&redirect_uri=${encodeURIComponent(redirectUri)}` +
     "&response_type=token" +
-    "&scope=chat:edit";
+    "&scope=user:write:chat";
 
   location.href = url;
 };

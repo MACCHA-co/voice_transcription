@@ -31,6 +31,10 @@ document.getElementById("loginBtn").onclick = () => {
 
   location.href = url;
 };
+if (!localStorage.getItem("twitch_token_cleared")) {
+  localStorage.removeItem("twitch_token");
+  localStorage.setItem("twitch_token_cleared", "true");
+}
 // ==============================
 //  OAuthトークン取得
 // ==============================

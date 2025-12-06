@@ -81,30 +81,19 @@ const micBtn = document.getElementById("micBtn");
 const resultBox = document.getElementById("result");
 
 const recognition = new webkitSpeechRecognition();
-recognizing = false;
+
 recognition.lang = "ja-JP";
 recognition.interimResults = false;
 recognition.continuous = true;
-recognition.onstart = () => {
-  recognizing = true;
-};
-
-recognition.onend = () => {
-  recognizing = false;
-  if (micBtn.dataset.auto === "true") {
-    recognition.start();
-  }
-};
+recognition.start();
 
 recognition.onresult = e => {
-  resultBox.textContent = e.results[0][0].transcript;
+  const last = e.results[e.results.length - 1];
+  const text = last[0].transcript.trim();
 };
-
-micBtn.onclick = () => {
-  if (recognizing) {
-    recognition.stop();
-  } else {
-    recognition.start();
+  if (text) {
+    resultBox.textContent = text;
+    console.log("認識:", text);
   }
 };
 
@@ -114,8 +103,10 @@ micBtn.onclick = () => {
 // ==============================
 document.getElementById("sendBtn").onclick = async () => {
   const message = resultBox.textContent;
-  if (!message) return;
-
+  if (!message){
+    console.log("送信内容が空です");
+     return;
+  }
   const res = await fetch(
     "https://api.twitch.tv/helix/chat/messages",
     {

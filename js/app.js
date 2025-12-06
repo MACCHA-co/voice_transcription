@@ -2,7 +2,7 @@
  Twitch OAuth 設定
 ==============================
 const clientId = "0t9h8td1qfp8phhcen3hd6jaghnafs";
-const redirectUri = "https://maccha-co.github.io/voice-chat/callback.html";
+const redirectUri = "https://MACCHA-co.github.io/voice-chat/callback.html";
 let accessToken = null;
 let username = null;
 
@@ -86,5 +86,6 @@ if ("webkitSpeechRecognition" in window) {
 micBtn.onclick = () => {
   recognition.start();
 };
+
 
 

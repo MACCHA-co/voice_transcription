@@ -83,13 +83,31 @@ const resultBox = document.getElementById("result");
 const recognition = new webkitSpeechRecognition();
 recognition.lang = "ja-JP";
 recognition.interimResults = false;
-recognition.continuous = false;
+recognition.continuous = true;
+
+recognition.onstart = () => {
+  recognizing = true;
+};
+
+recognition.onend = () => {
+  recognizing = false;
+  if (micBtn.dataset.auto === "true") {
+    recognition.start();
+  }
+};
 
 recognition.onresult = e => {
   resultBox.textContent = e.results[0][0].transcript;
 };
 
-micBtn.onclick = () => recognition.start();
+micBtn.onclick = () => {
+  if (recognizing) {
+    recognition.stop();
+  } else {
+    recognition.start();
+  }
+};
+
 
 // ==============================
 //  コメント送信（Helix API）
@@ -119,6 +137,6 @@ document.getElementById("sendBtn").onclick = async () => {
     console.error(await res.text());
     alert("送信失敗");
   } else {
-    alert("送信成功");
+    console.log(message);
   }
 };

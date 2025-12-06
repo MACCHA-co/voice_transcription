@@ -7,14 +7,12 @@ let accessToken = localStorage.getItem("twitch_token");
 let username = localStorage.getItem("twitch_username");
 
 document.getElementById("loginBtn").onclick = () => {
-  const url =
+  location.href =
     `https://id.twitch.tv/oauth2/authorize` +
     `?client_id=${clientId}` +
     `&redirect_uri=${encodeURIComponent(redirectUri)}` +
     `&response_type=token` +
     `&scope=chat:read+chat:edit`;
-
-  window.location.href = url;
 };
 
 
@@ -44,6 +42,7 @@ document.getElementById("sendBtn").onclick = () => {
   const msg = document.getElementById("result").textContent;
   if (msg) client.say(channel, msg);
 };
+
 
 
 

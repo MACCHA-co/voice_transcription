@@ -1,7 +1,8 @@
 const clientId = "0t9h8td1qfp8phhcen3hd6jaghnafs";
 const redirectUri = "https://MACCHA-co.github.io/voice_transcription/callback.html";
-
-let accessToken = null;
+const channel = "チャンネル名"
+let accessToken = localStorage.getItem("twitch_token");
+let twitchUsername = localStorage.getItem("twitch_username");
 
 // Twitchにログイン
 document.getElementById("loginBtn").onclick = () => {
@@ -39,32 +40,23 @@ if (location.hash.includes("access_token")) {
   alert("ログイン成功！チャット送信できます。");
 }
 
-// チャット送信処理
-document.getElementById("sendBtn").onclick = async () => {
-  const message = textDiv.innerText;
+//チャット送信
+if (accessToken && twitchUsername) {
+  sendBtn.disabled = false;
 
-  const userInfo = await fetch("https://api.twitch.tv/helix/users", {
-    headers: {
-      "Authorization": `Bearer ${accessToken}`,
-      "Client-ID": clientId
-    }
-  }).then(r => r.json());
-
-  const userId = userInfo.data[0].id;
-
-  await fetch("https://api.twitch.tv/helix/chat/chatters", {
-    method: "POST",
-    headers: {
-      "Authorization": `Bearer ${accessToken}`,
-      "Client-ID": clientId,
-      "Content-Type": "application/json"
+  const client = new tmi.Client({
+    identity: {
+      username: twitchUsername,
+      password: `oauth:${accessToken}`
     },
-    body: JSON.stringify({
-      broadcaster_id: userId,
-      sender_id: userId,
-      message: message
-    })
+    channels: [channel]
   });
 
-  alert("送信しました: " + message);
-};
+  client.connect();
+
+  sendBtn.onclick = () => {
+    if (textDiv.innerText) {
+      client.say(channel, textDiv.innerText);
+    }
+  };
+}

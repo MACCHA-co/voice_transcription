@@ -87,14 +87,14 @@ recognition.interimResults = false;
 recognition.continuous = true;
 recognition.start();
 
+let latestText = "";
 recognition.onresult = e => {
   const last = e.results[e.results.length - 1];
-  const text = last[0].transcript.trim();
-};
-if (text) {
-  resultBox.textContent = text;
-  console.log("認識:", text);
-};
+  latestText = last[0].transcript.trim();
+  if (!atestText) return;
+  resultBox.textContent = latestText;
+  console.log("認識:", latestText);
+ };
 
 
 

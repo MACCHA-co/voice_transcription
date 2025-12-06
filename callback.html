@@ -1,25 +1,39 @@
 <!DOCTYPE html>
-<html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <title>Logging in...</title>
+</head>
 <body>
-<script>
-  const params = new URLSearchParams(location.hash.substring(1));
-  const token = params.get("access_token");
+  <p>ログイン処理中...</p>
 
-  if (token) {
-    localStorage.setItem("twitch_token", token);
-  }
+  <script>
+    // URLハッシュから token を取得
+    const params = new URLSearchParams(location.hash.substring(1));
+    const accessToken = params.get("access_token");
 
-  fetch("https://api.twitch.tv/helix/users", {
-    headers: {
-      "Authorization": `Bearer ${token}`,
-      "Client-ID": "あなたのClientID"
+    if (!accessToken) {
+      document.body.innerText = "アクセストークン取得失敗";
+    } else {
+      // token保存
+      localStorage.setItem("twitch_token", accessToken);
+
+      // ユーザー情報取得
+      fetch("https://api.twitch.tv/helix/users", {
+        headers: {
+          "Authorization": "Bearer " + accessToken,
+          "Client-Id": "0t9h8td1qfp8phhcen3hd6jaghnafs"
+        }
+      })
+      .then(res => res.json())
+      .then(data => {
+        const username = data.data[0].login;
+        localStorage.setItem("twitch_username", username);
+
+        // index.html に戻す
+        location.href = "index.html";
+      });
     }
-  })
-  .then(r => r.json())
-  .then(data => {
-    localStorage.setItem("twitch_username", data.data[0].login);
-    location.href = "./index.html";
-  });
-</script>
+  </script>
 </body>
 </html>

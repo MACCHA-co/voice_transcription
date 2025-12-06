@@ -1,55 +1,115 @@
 const clientId = "0t9h8td1qfp8phhcen3hd6jaghnafs";
 const redirectUri = "https://MACCHA-co.github.io/voice_transcription/callback.html";
-const channel = "ryokumacha";
+const channel = "ryokumacha"; //ここをチャンネル名に変更
 
-let accessToken = localStorage.getItem("twitch_token");
-let twitchUsername = localStorage.getItem("twitch_username");
+let accessToken = null;
+let broadcasterId = null;
+let senderId = null;
 
-const loginBtn = document.getElementById("loginBtn");
-const sendBtn  = document.getElementById("sendBtn");
-const textDiv  = document.getElementById("text");
+async function getUserIdByLogin(loginName) {
+  const res = await fetch(
+    `https://api.twitch.tv/helix/users?login=${loginName}`,
+    {
+      headers: {
+        "Authorization": `Bearer ${accessToken}`,
+        "Client-Id": clientId
+      }
+    }
+  );
+  const data = await res.json();
+  return data.data[0].id;
+}
 
 // Twitchにログイン
-loginBtn.onclick = () => {
+document.getElementById("loginBtn").onclick = () => {
   const url =
     "https://id.twitch.tv/oauth2/authorize" +
     `?client_id=${clientId}` +
     `&redirect_uri=${encodeURIComponent(redirectUri)}` +
     "&response_type=token" +
-    "&scope=chat:read+chat:edit";
+    "&scope=chat:edit";
 
   location.href = url;
 };
+// ==============================
+//  OAuthトークン取得
+// ==============================
+if (location.hash.includes("access_token")) {
+  const params = new URLSearchParams(location.hash.substring(1));
+  accessToken = params.get("access_token");
 
-// 音声認識
+  // token保存
+  localStorage.setItem("twitch_token", accessToken);
+  getUserInfo();
+}
+// ==============================
+//  ユーザー情報取得
+// ==============================
+async function getUserInfo() {
+  const res = await fetch("https://api.twitch.tv/helix/users", {
+    headers: {
+      "Authorization": `Bearer ${accessToken}`,
+      "Client-Id": clientId
+    }
+  });
+  const data = await res.json();
+  const user = data.data[0];
+
+  broadcasterId = await getUserIdByLogin(channel);
+  senderId = user.id;
+
+  document.getElementById("user").textContent =
+    `Logged in as: ${user.login}`;
+
+  document.getElementById("sendBtn").disabled = false;
+}
+
+
+// ==============================
+//  音声認識
+// ==============================
+const micBtn = document.getElementById("micBtn");
+const resultBox = document.getElementById("result");
+
 const recognition = new webkitSpeechRecognition();
 recognition.lang = "ja-JP";
-recognition.continuous = true;
+recognition.interimResults = false;
+recognition.continuous = false;
 
-recognition.onresult = (e) => {
-  textDiv.innerText =
-    e.results[e.results.length - 1][0].transcript;
+recognition.onresult = e => {
+  resultBox.textContent = e.results[0][0].transcript;
 };
 
-recognition.start();
+micBtn.onclick = () => recognition.start();
 
-//チャット送信
-if (accessToken && twitchUsername) {
-  sendBtn.disabled = false;
+// ==============================
+//  コメント送信（Helix API）
+// ==============================
+document.getElementById("sendBtn").onclick = async () => {
+  const message = resultBox.textContent;
+  if (!message) return;
 
-  const client = new tmi.Client({
-    identity: {
-      username: twitchUsername,
-      password: `oauth:${accessToken}`
-    },
-    channels: [channel]
-  });
-
-  client.connect();
-
-  sendBtn.onclick = () => {
-    if (textDiv.innerText) {
-      client.say(channel, textDiv.innerText);
+  const res = await fetch(
+    "https://api.twitch.tv/helix/chat/messages",
+    {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${accessToken}`,
+        "Client-Id": clientId,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        broadcaster_id: broadcasterId,
+        sender_id: senderId,
+        message: message
+      })
     }
-  };
-}
+  );
+
+  if (!res.ok) {
+    console.error(await res.text());
+    alert("送信失敗");
+  } else {
+    alert("送信成功");
+  }
+};

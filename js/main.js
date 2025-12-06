@@ -81,10 +81,10 @@ const micBtn = document.getElementById("micBtn");
 const resultBox = document.getElementById("result");
 
 const recognition = new webkitSpeechRecognition();
+recognizing = false;
 recognition.lang = "ja-JP";
 recognition.interimResults = false;
 recognition.continuous = true;
-
 recognition.onstart = () => {
   recognizing = true;
 };

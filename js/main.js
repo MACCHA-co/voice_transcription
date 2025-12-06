@@ -1,6 +1,6 @@
 const clientId = "0t9h8td1qfp8phhcen3hd6jaghnafs";
 const redirectUri = "https://MACCHA-co.github.io/voice_transcription/callback.html";
-const channel = "チャンネル名"
+const channel = "ryokumacha"
 let accessToken = localStorage.getItem("twitch_token");
 let twitchUsername = localStorage.getItem("twitch_username");
 

@@ -11,7 +11,7 @@ document.getElementById("loginBtn").onclick = () => {
   const url =
     `https://id.twitch.tv/oauth2/authorize` +
     `?client_id=${clientId}` +
-    `&redirect_uri=${redirectUri}` +
+    `&redirect_uri=${encodeURIComponent(redirectUri)}` +
     `&response_type=token` +
     `&scope=chat:read+chat:edit`;
 
@@ -86,6 +86,7 @@ if ("webkitSpeechRecognition" in window) {
 micBtn.onclick = () => {
   recognition.start();
 };
+
 
 
 

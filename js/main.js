@@ -86,7 +86,6 @@ let isRecognizing=false
 recognition.lang = "en-US";
 recognition.interimResults = false;
 recognition.continuous = true;
-recognition.start();
 
 recognition.onstart = () => {
   isRecognizing = true;

@@ -82,7 +82,7 @@ const resultBox = document.getElementById("result");
 
 const recognition = new webkitSpeechRecognition();
 
-recognition.lang = "ja-JP";
+recognition.lang = "en-US";
 recognition.interimResults = false;
 recognition.continuous = true;
 recognition.start();

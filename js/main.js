@@ -81,11 +81,30 @@ const micBtn = document.getElementById("micBtn");
 const resultBox = document.getElementById("result");
 
 const recognition = new webkitSpeechRecognition();
+let isRecognizing=false
 
 recognition.lang = "en-US";
 recognition.interimResults = false;
 recognition.continuous = true;
 recognition.start();
+
+recognition.onstart = () => {
+  isRecognizing = true;
+  console.log("🎙 音声認識スタート");
+};
+
+recognition.onend = () => {
+  isRecognizing = false;
+  console.log("🛑 音声認識終了");
+};
+
+micBtn.onclick = () => {
+  if (isRecognizing) {
+    recognition.stop();  // 一度止める
+  } else {
+    recognition.start(); // 再スタート
+  }
+};
 
 let latestText = "";
 recognition.onresult = e => {
@@ -95,6 +114,9 @@ recognition.onresult = e => {
   resultBox.textContent = latestText;
   console.log("認識:", latestText);
  };
+
+
+
 
 
 

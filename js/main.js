@@ -1,6 +1,6 @@
 const clientId = "0t9h8td1qfp8phhcen3hd6jaghnafs";
 const redirectUri = "https://MACCHA-co.github.io/voice_transcription/callback.html";
-const channel = "ryokumacha"; //ここをチャンネル名に変更
+const channel = "20251205iitt"; //ここをチャンネル名に変更
 
 let accessToken = null;
 let broadcasterId = null;
